@@ -40,8 +40,8 @@ def authorize():
         return render_template('rhino.html', status='OK')
     return render_template('rhino.html', status='Failed to initialize file')
 
-host = os.getenv('HBNB_API_HOST', '0.0.0.0')
-port = os.getenv('HBNB_API_PORT', 5000)
+host = os.getenv('FLASK_HOST', '0.0.0.0')
+port = os.getenv('FLASK_PORT', 5000)
 
 if __name__ == '__main__':
         app.run(host=host, port=port)
