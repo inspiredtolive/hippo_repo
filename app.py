@@ -21,28 +21,37 @@ oauth.register(
     client_kwargs={'scope': 'user repo'},
 )
 
+
 @app.route('/')
 def homepage():
     return render_template('index.html')
+
 
 @app.route('/login')
 def login():
     redirect_uri = url_for('authorize', _external=True)
     return oauth.github.authorize_redirect(redirect_uri)
 
+
 @app.route('/authorize')
 def authorize():
     token = oauth.github.authorize_access_token()
     resp = oauth.github.get('user')
     profile = resp.json()
-    resp = oauth.github.put('repos/inspiredtolive/monty/contents/test3.txt', data=json.dumps({"message": "Initial Commit", "content": "bXkgbmV3IGZpbGUgY29udGVudHM="}))
-    # do something with the token and profile
+    resp = oauth.github.put(
+        'repos/{}/monty/contents/test4.txt'.format(profile.get('login')),
+        data=json.dumps({
+            "message": "Initial Commit",
+            "content": "bXkgbmV3IGZpbGUgY29udGVudHM="
+        })
+    )
     if resp.status_code == 201:
         return render_template('rhino.html', status='OK')
     return render_template('rhino.html', status='Failed to initialize file')
 
-host = os.getenv('FLASK_HOST', '0.0.0.0')
-port = os.getenv('FLASK_PORT', 5000)
 
 if __name__ == '__main__':
-        app.run(host=host, port=port)
+        if os.getenv('FLASK_ENV') == 'production':
+            from waitress import serve
+            serve(app, host='0.0.0.0', port=5001)
+        app.run(host='0.0.0.0', port=5000)
