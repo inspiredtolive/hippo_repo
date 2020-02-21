@@ -5,7 +5,7 @@ import json
 # use loginpass to make OAuth connection simpler
 
 app = Flask(__name__)
-app.secret_key = b'pengwingsiscool'
+app.secret_key = os.environ.get('SECRET_KEY') or 'pengwingsiscool'
 
 oauth = OAuth(app)
 oauth.register(
