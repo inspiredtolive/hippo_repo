@@ -11,8 +11,8 @@ app.secret_key = os.environ.get('SECRET_KEY') or 'pengwingsiscool'
 oauth = OAuth(app)
 oauth.register(
     name='github',
-    client_id='6079ab095435e0910228',
-    client_secret='ad7f3c9de62a5f1b41da18f584d9a2ab6eda0f7b',
+    client_id=os.getenv('CLIENT_ID') or '10a81c493f912828f09f',
+    client_secret=os.getenv('CLIENT_SECRET') or 'cd6b2f37ab6b2e2991ef2c09bc918a8499d4af11',
     access_token_url='https://github.com/login/oauth/access_token',
     access_token_params=None,
     authorize_url='https://github.com/login/oauth/authorize',
@@ -39,7 +39,7 @@ def authorize():
     resp = oauth.github.get('user')
     profile = resp.json()
     resp = oauth.github.put(
-        'repos/{}/monty/contents/test4.txt'.format(profile.get('login')),
+        'repos/{}/monty/contents/test5.txt'.format(profile.get('login')),
         data=json.dumps({
             "message": "Initial Commit",
             "content": "bXkgbmV3IGZpbGUgY29udGVudHM="
@@ -47,7 +47,7 @@ def authorize():
     )
     if resp.status_code == 201:
         return render_template('rhino.html', status='OK')
-    return render_template('rhino.html', status='Failed to initialize file')
+    return render_template('rhino.html', status='Failed to initialize file. File already exists.')
 
 
 if __name__ == '__main__':
